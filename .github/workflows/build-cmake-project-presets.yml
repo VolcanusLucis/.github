@@ -38,9 +38,8 @@ jobs:
         run: |
           sudo apt remove cmake -y
           sudo pip install cmake --upgrade
-          if [ "${{ inputs.target }}" == "win" ]; then
-            echo "Architecture: ${{ inputs.architecture }}"
-            if [ "${{ inputs.architecture }}" == "x64"]; then
+          if [ ${{ inputs.target }} == "win" ]; then
+            if [ ${{ inputs.architecture }} == "x64"]; then
               sudo apt install gcc-mingw-w64-x86-64
               sudo apt install g++-mingw-w64-x86-64
             else
