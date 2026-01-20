@@ -25,7 +25,11 @@ on:
         description: 'What is the build configuration, e.g. debug or release'
         required: true
         type: string
-        
+      bypass:
+        description: 'Bypasses the whole workflow'
+        required: false
+        type: boolean
+
 jobs: 
   build:
     runs-on: ubuntu-latest
@@ -36,6 +40,10 @@ jobs:
       - name: Initialise Runner
         shell: bash
         run: |
+          if [ ${{ inputs.bypass }} == true ]; then
+            exit 0
+          fi
+          
           sudo apt remove cmake -y
           sudo pip install cmake --upgrade
           if [ ${{ inputs.target }} == "win" ]; then
@@ -52,12 +60,14 @@ jobs:
           fi
           
       - name: CMake Configure
+        if: ${{ success() && !inputs.bypass }}
         shell: bash
         run:
           cmake -S "${{ github.workspace }}"
           --preset ${{ inputs.build-tool }}-${{ inputs.compiler }}-${{ inputs.architecture }}-${{ inputs.target }}
 
       - name: CMake Build
+        if: ${{ success() && !inputs.bypass }}
         shell: bash
         run:
           cmake --build
