@@ -8,9 +8,7 @@ on:
         required: true
         type: string
       build-mode:
-        description: | 
-          Build mode for the language, e.g. `autobuild` for `c-cpp` or `none` for `actions`
-          Defaults to `none`
+        description: 'Build mode for the language, e.g. `autobuild` for `c-cpp` or `none` for `actions`'
         default: 'none'
         required: false
         type: string
