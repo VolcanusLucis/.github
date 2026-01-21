@@ -18,10 +18,12 @@ inputs:
 
 runs:
   using: composite
-
+  
   steps:
-    - uses: actions/checkout@v4
-    - run: echo "Analysing (${{ inputs.language }})..."
+    - name: Checkout
+      shell: bash
+      uses: actions/checkout@v4
+      run: echo "Analysing (${{ inputs.language }})..."
     
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
@@ -39,15 +41,3 @@ runs:
       uses: github/codeql-action/analyze@v4
       with:
         category: "/language:${{ inputs.language }}"
-
-
-
-jobs:
-  analyze:
-    name: Analyze (${{ inputs.language }})
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-      packages: read
-
-
