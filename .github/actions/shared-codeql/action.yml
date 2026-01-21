@@ -20,10 +20,7 @@ runs:
   using: composite
   
   steps:
-    - name: Checkout
-      shell: bash
-      uses: actions/checkout@v4
-      run: echo "Analysing (${{ inputs.language }})..."
+    - uses: actions/checkout@v4
     
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
