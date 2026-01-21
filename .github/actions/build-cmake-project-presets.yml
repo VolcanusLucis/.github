@@ -1,0 +1,63 @@
+name: Build CMake Project with Presets
+description: 'Builds a CMake Project using a set Preset. Requires `contents: read` permissions.'
+
+inputs: 
+  build-tool:
+    description: 'Build tool for CMake to use, e.g. ninja'
+    required: true
+    type: string
+  compiler:
+    description: 'What compiler should be used for C/C++, e.g. gcc'
+    required: true
+    type: string
+  architecture:
+    description: 'Target architecture for compilation, e.g. x64 or x86'
+    required: true
+    type: string
+  target:
+    description: 'What the target platform is for the build, e.g. win or linux'
+    required: true
+    type: string
+  build-type:
+    description: 'What is the build configuration, e.g. debug or release'
+    required: true
+    type: string
+
+runs:
+  using: composite
+    
+  steps:
+    - uses: actions/checkout@v4
+      
+    - name: Initialise Runner
+      shell: bash
+      run: |
+        sudo apt remove cmake -y
+        sudo pip install cmake --upgrade
+        if [ ${{ inputs.target }} == "win" ]; then
+          if [ ${{ inputs.architecture }} == "x64" ]; then
+            sudo apt install gcc-mingw-w64-x86-64
+            sudo apt install g++-mingw-w64-x86-64
+          else
+            sudo apt install gcc-mingw-w64-i686
+            sudo apt install g++-mingw-w64-i686
+          fi
+        else
+          sudo apt install gcc-multilib
+          sudo apt install g++-multilib
+        fi
+        
+    - name: CMake Configure
+      if: success()
+      shell: bash
+      run: >
+        cmake -S "${{ github.workspace }}"
+        --preset ${{ inputs.build-tool }}-${{ inputs.compiler }}-${{ inputs.architecture }}-${{ inputs.target }}
+
+    - name: CMake Build
+      if: success()
+      shell: bash
+      run: >
+        cmake --build
+        --preset ${{ inputs.build-tool }}-${{ inputs.compiler }}-${{ inputs.architecture }}-${{ inputs.target }}-${{ inputs.build-type }}
+    
