@@ -69,7 +69,9 @@ runs:
       shell: bash
       run: |
         if [ ${{ inputs.development-build }} ]; then
-          cmake --build --preset ${{ inputs.compiler }}-${{ inputs.architecture }}-${{ inputs.target }}-devel
+          cmake --build\
+            --preset ${{ inputs.compiler }}-${{ inputs.architecture }}-${{ inputs.target }}-devel-${{ inputs.build-type }}
         else
-          cmake --build --preset ${{ inputs.compiler }}-${{ inputs.architecture }}-${{ inputs.target }}
+          cmake --build\
+            --preset ${{ inputs.compiler }}-${{ inputs.architecture }}-${{ inputs.target }}-${{ inputs.build-type }}
         fi
