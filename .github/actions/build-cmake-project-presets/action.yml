@@ -18,6 +18,10 @@ inputs:
     description: 'What the target platform is for the build, e.g. win or linux'
     required: true
     type: string
+  development-build:
+    description: 'Does this target development build, e.g. true or false'
+    required: true
+    type: boolean
   build-type:
     description: 'What is the build configuration, e.g. debug or release'
     required: true
@@ -50,14 +54,22 @@ runs:
     - name: CMake Configure
       if: success()
       shell: bash
-      run: >
-        cmake -S "${{ github.workspace }}"
-        --preset ${{ inputs.build-tool }}-${{ inputs.compiler }}-${{ inputs.architecture }}-${{ inputs.target }}
+      run: |
+        if [ ${{ inputs.development-build }} ]; then
+          cmake -S "${{ github.workspace }}"\
+            --preset ${{ inputs.build-tool }}-${{ inputs.compiler }}-${{ inputs.architecture }}-${{ inputs.target }}-devel
+        else
+          cmake -S "${{ github.workspace }}"\
+            --preset ${{ inputs.build-tool }}-${{ inputs.compiler }}-${{ inputs.architecture }}-${{ inputs.target }}
+        fi
+        
 
     - name: CMake Build
       if: success()
       shell: bash
-      run: >
-        cmake --build
-        --preset ${{ inputs.build-tool }}-${{ inputs.compiler }}-${{ inputs.architecture }}-${{ inputs.target }}-${{ inputs.build-type }}
-    
+      run: |
+        if [ ${{ inputs.development-build }} ]; then
+          cmake --build --preset ${{ inputs.compiler }}-${{ inputs.architecture }}-${{ inputs.target }}-devel
+        else
+          cmake --build --preset ${{ inputs.compiler }}-${{ inputs.architecture }}-${{ inputs.target }}
+        fi
