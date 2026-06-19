@@ -1,0 +1,57 @@
+name: Create Release Action
+author: Ethirix
+description: 'Creates a release with builds. Requires `contents: write` permissions.'
+
+inputs:
+  title:
+    description: 'Release title, e.g. "Release v1.5.2" - if empty uses tag'
+    required: false
+    default: ''
+  tag:
+    description: 'Tag to attach release to, e.g. v1.5.2'
+    required: true
+  generate-notes:
+    description: 'Automatically generates notes using --generate-notes, e.g. true or false'
+    required: false
+    default: 'true'
+  verify-tag:
+    description: 'Fails action is tag is does not exist using --verify-tag, e.g. true or false'
+    required: false
+    default: 'true'
+  draft:
+    description: 'Determines if release is a draft using --draft, e.g. true or false'
+    required: false
+    default: 'false'
+
+runs:
+  using: composite
+
+  steps:
+    - name: "Initialise Variables"
+      shell: bash
+      run: |
+        if [[ ${{ inputs.title }} == "" ]]; then
+          echo "title=${{ inputs.tag }}" >> $GITHUB_ENV
+        else
+          echo "title=${{ inputs.title }}" >> $GITHUB_ENV
+        fi
+
+        if [[ ${{ inputs.draft }} == 'true' ]]; then
+          echo "draft=--draft" >> $GITHUB_ENV
+        fi
+
+        if [[ ${{ inputs.verify-tag }} == 'true' ]]; then
+          echo "verify-tag=--verify-tag" >> $GITHUB_ENV
+        fi
+
+        if [[ ${{ inputs.generate-notes }} == 'true' ]]; then
+          echo "generate-notes=--generate-notes" >> $GITHUB_ENV
+        fi
+
+    - name: "Create Release"
+      shell: bash
+      run: |
+        gh release create ${{ inputs.tag }} --title "${{ env.title }}" \
+            ${{ env.generate-notes }} ${{ env.verify-tag }} ${{ env.draft }}
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
