@@ -1,38 +1,26 @@
 name: Build CMake Project with Presets
-description: 'Builds a CMake Project using a set Preset. Requires `contents: read` permissions.'
+description: 'Configurers and builds a CMake Preset in the form: target-architecture-compiler[-build-type]. Requires `contents: read` permissions.'
 
-inputs: 
-  build-tool:
-    description: 'Build tool for CMake to use, e.g. ninja'
-    required: true
-    type: string
-  compiler:
-    description: 'What compiler should be used for C/C++, e.g. gcc'
-    required: true
-    type: string
-  architecture:
-    description: 'Target architecture for compilation, e.g. x64 or x86'
-    required: true
-    type: string
+inputs:
   target:
     description: 'What the target platform is for the build, e.g. win or linux'
     required: true
-    type: string
-  development-build:
-    description: 'Does this target development build, e.g. true or false'
+  architecture:
+    description: 'Target architecture for compilation, e.g. x64 or x86'
     required: true
-    type: boolean
+  compiler:
+    description: 'What compiler should be used for C/C++, e.g. gcc or mingw64'
+    required: true
   build-type:
-    description: 'What is the build configuration, e.g. debug or release'
+    description: 'What is the build configuration, e.g. release or debug'
     required: true
-    type: string
 
 runs:
   using: composite
     
   steps:
-    - uses: actions/checkout@v6
-      
+    - uses: actions/checkout@v7
+
     - name: Initialise Runner
       shell: bash
       run: |
@@ -54,24 +42,9 @@ runs:
     - name: CMake Configure
       if: success()
       shell: bash
-      run: |
-        if [ ${{ inputs.development-build }} ]; then
-          cmake -S "${{ github.workspace }}"\
-            --preset ${{ inputs.build-tool }}-${{ inputs.compiler }}-${{ inputs.architecture }}-${{ inputs.target }}-devel
-        else
-          cmake -S "${{ github.workspace }}"\
-            --preset ${{ inputs.build-tool }}-${{ inputs.compiler }}-${{ inputs.architecture }}-${{ inputs.target }}
-        fi
-        
+      run: cmake --preset ${{ inputs.target }}-${{ inputs.architecture }}-${{ inputs.compiler }}
 
     - name: CMake Build
       if: success()
       shell: bash
-      run: |
-        if [ ${{ inputs.development-build }} ]; then
-          cmake --build\
-            --preset ${{ inputs.compiler }}-${{ inputs.architecture }}-${{ inputs.target }}-devel-${{ inputs.build-type }}
-        else
-          cmake --build\
-            --preset ${{ inputs.compiler }}-${{ inputs.architecture }}-${{ inputs.target }}-${{ inputs.build-type }}
-        fi
+      run: cmake --build --preset ${{ inputs.target }}-${{ inputs.architecture }}-${{ inputs.compiler }}-${{ inputs.build-type }}
