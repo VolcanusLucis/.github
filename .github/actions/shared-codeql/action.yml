@@ -5,22 +5,19 @@ inputs:
   language:
     description: 'Language to run CodeQL on. e.g. `c-cpp`'
     required: true
-    type: string
   build-mode:
     description: 'Build mode for the language, e.g. `autobuild` for `c-cpp` or `none` for `actions`'
     default: 'none'
     required: false
-    type: string
   manual-command-list:
     description: 'If build-mode is set to `manual` then this will be used to build the code'
     required: false
-    type: string
 
 runs:
   using: composite
   
   steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
