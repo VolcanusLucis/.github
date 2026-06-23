@@ -17,6 +17,8 @@ runs:
   using: composite
 
   steps:
+    - uses: actions/checkout@v7
+      
     - name: "Upload to Release"
       shell: bash
       run: gh release upload ${{ inputs.tag }} ${{ inputs.file }}
