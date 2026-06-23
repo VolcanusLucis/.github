@@ -33,7 +33,7 @@ runs:
     - name: "Initialise Variables"
       shell: bash
       run: |
-        if [[ ${{ inputs.title }} == "" ]]; then
+        if [[ "${{ inputs.title }}" == "" ]]; then
           echo "title=${{ inputs.tag }}" >> $GITHUB_ENV
         else
           echo "title=${{ inputs.title }}" >> $GITHUB_ENV
