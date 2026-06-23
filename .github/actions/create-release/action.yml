@@ -30,6 +30,8 @@ runs:
   using: composite
 
   steps:
+    - uses: actions/checkout@v7
+
     - name: "Initialise Variables"
       shell: bash
       run: |
