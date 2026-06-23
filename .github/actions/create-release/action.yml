@@ -1,4 +1,4 @@
-name: Create Release Action
+name: Create Release
 author: Ethirix
 description: 'Creates a release with builds. Requires `contents: write` permissions.'
 
@@ -22,6 +22,9 @@ inputs:
     description: 'Determines if release is a draft using --draft, e.g. true or false'
     required: false
     default: 'false'
+  token:
+    description: 'GitHub Token required to use `gh`, e.g. secrets.GITHUB_TOKEN'
+    required: true
 
 runs:
   using: composite
@@ -54,4 +57,4 @@ runs:
         gh release create ${{ inputs.tag }} --title "${{ env.title }}" \
             ${{ env.generate-notes }} ${{ env.verify-tag }} ${{ env.draft }}
       env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ inputs.token }}
