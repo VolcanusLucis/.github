@@ -1,4 +1,4 @@
-name: upload-to-release
+name: Upload File to Release
 author: Ethirix
 description: 'Uploads a file to a tagged release. Requires `contents: write` permissions.'
 
@@ -8,6 +8,11 @@ inputs:
     required: true
   file:
     description: 'Path to file to be uploaded, e.g. ./artefacts/build.tar.gz'
+    required: true
+  token:
+    description: 'GitHub Token required to use `gh`, e.g. secrets.GITHUB_TOKEN'
+    required: true
+
 runs:
   using: composite
 
@@ -17,4 +22,4 @@ runs:
       run: gh release upload ${{ inputs.tag }} ${{ inputs.file }}
 
       env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ inputs.token }}
